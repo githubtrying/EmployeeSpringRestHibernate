@@ -1,0 +1,6 @@
+target
+.settings/
+.springBeans
+.project
+.classpath
+src/main/webapp/static
