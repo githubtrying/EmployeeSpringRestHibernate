@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.empdemo.model.EmpResponse;
+
 @RestController
 @PropertySource(value = { "classpath:application.properties" })
 public class FileUploadController {
@@ -20,8 +22,9 @@ public class FileUploadController {
 	private Environment environment;
 
 	@RequestMapping(value = "/upload")
-	public String upload(@RequestParam("file") MultipartFile file,
+	public EmpResponse upload(@RequestParam("file") MultipartFile file,
 			@RequestParam("username") String name) throws IOException {
+		EmpResponse empResponse = new EmpResponse();
 		String location = environment
 				.getRequiredProperty("user.profileStoreLocation");
 		byte[] bytes;
@@ -34,13 +37,16 @@ public class FileUploadController {
 								+ file.getOriginalFilename())));
 				stream.write(bytes);
 				stream.close();
-				return "You successfully uploaded " + name + "!";
+				empResponse.setMessage("You successfully uploaded " + name
+						+ "!");
 			} catch (Exception e) {
-				return "You failed to upload " + name + " => " + e.getMessage();
+				empResponse.setMessage("You failed to upload " + name + " => "
+						+ e.getMessage());
 			}
 		} else {
-			return "You failed to upload " + name
-					+ " because the file was empty.";
+			empResponse.setMessage("You failed to upload " + name
+					+ " because the file was empty.");
 		}
+		return empResponse;
 	}
 }

@@ -1,6 +1,5 @@
 package com.empdemo.controller;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.empdemo.model.EmpResponse;
 import com.empdemo.model.Employee;
 import com.empdemo.service.EmployeesService;
 
@@ -20,17 +20,22 @@ public class EmployeesController {
 	private EmployeesService service;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public List<Employee> list() {
-		return service.list();
+	public EmpResponse list() {
+		EmpResponse empResponse = new EmpResponse();
+		List<Employee> list = service.list();
+		empResponse.setData(list);
+		return empResponse;
 	}
 
 	// PUT request for updating/saving employee
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String updateEmployees(@RequestBody List<Employee> employees) {
+	public EmpResponse updateEmployees(@RequestBody List<Employee> employees) {
+		EmpResponse empResponse = new EmpResponse();
+		empResponse.setMessage("success");
 		for (Employee employee : employees) {
 			service.saveOrUpdateEmployee(employee);
 		}
-		return "success";
+		return empResponse;
 	}
 
 	// DELETE request for updating/saving employee
@@ -40,7 +45,9 @@ public class EmployeesController {
 	}
 
 	@RequestMapping("/{id}")
-	public Employee getEmployee(@PathVariable Long id) {
-		return service.getEmployee(id);
+	public EmpResponse getEmployee(@PathVariable Long id) {
+		EmpResponse empResponse = new EmpResponse();
+		empResponse.setData(service.getEmployee(id));
+		return empResponse;
 	}
 }
